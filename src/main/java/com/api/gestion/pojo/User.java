@@ -8,7 +8,7 @@ import org.hibernate.annotations.DynamicUpdate;
 import java.io.Serializable;
 
 //JDBC
-@NamedQuery(name = "User.findByEmail", query = " SELECT u FROM User WHERE u.email =: email")
+@NamedQuery(name = "User.findByEmail", query = " SELECT u FROM User u WHERE u.email =: email")
 // --------------
 
 
