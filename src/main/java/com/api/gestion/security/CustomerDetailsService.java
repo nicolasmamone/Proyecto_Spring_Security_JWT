@@ -1,4 +1,4 @@
-package com.api.gestion.jwt;
+package com.api.gestion.security;
 
 import com.api.gestion.dao.UserDAO;
 import com.api.gestion.pojo.User;

@@ -1,7 +1,8 @@
-package com.api.gestion.jwt;
+package com.api.gestion.security.jwt;
 
 // Clase que me permite poder validar el token
 
+import com.api.gestion.security.CustomerDetailsService;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
