@@ -17,7 +17,7 @@ public class JwtUtil {
 
     private String secret = "springboot";
 
-    private String extractUserName(String token){
+    public String extractUserName(String token){
         return extractClaims(token,Claims::getSubject);
     }
 
