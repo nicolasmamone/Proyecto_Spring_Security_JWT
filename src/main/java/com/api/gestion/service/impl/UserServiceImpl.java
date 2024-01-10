@@ -3,12 +3,17 @@ package com.api.gestion.service.impl;
 import com.api.gestion.constantes.FacturaConstantes;
 import com.api.gestion.dao.UserDAO;
 import com.api.gestion.pojo.User;
+import com.api.gestion.security.CustomerDetailsService;
+import com.api.gestion.security.jwt.JwtUtil;
 import com.api.gestion.service.UserService;
 import com.api.gestion.util.FacturaUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -21,8 +26,14 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserDAO userDAO;
 
+    @Autowired
+    private AuthenticationManager authenticationManager; // Quienes pueden acceder
 
+    @Autowired
+    private CustomerDetailsService customerDetailsService;
 
+    @Autowired
+    private JwtUtil jwtUtil;
 
 
     // Método para poder guardar un usuario
@@ -72,4 +83,27 @@ public class UserServiceImpl implements UserService {
 
         return user;
     }
+
+    @Override
+    public ResponseEntity<String> login(Map<String, String> requestMap) {
+        log.info("Dentro del login");
+        try{
+            Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(requestMap.get("email"), requestMap.get("password"))
+            );
+            if (authentication. isAuthenticated()){ // si su estado es true entonces esta activo
+                if (customerDetailsService.getUserDetail().getStatus().equalsIgnoreCase("true")){
+                    return new ResponseEntity<String>("{\"token\":\" "
+                            + jwtUtil.generateToken(customerDetailsService.getUserDetail().getEmail(), customerDetailsService.getUserDetail().getRole()) + "\"}", // generamos el token
+                            HttpStatus.OK);
+                }else{
+                    return new ResponseEntity<String>("{\"mensaje\":\" "+"Espere la aprobacion del administrador"+"\"}", HttpStatus.BAD_REQUEST);
+                }
+            }
+        }catch(Exception exception){
+            log.error(" {}",exception);
+        }
+        return new ResponseEntity<String>("{\"mensaje\":\" "+"Credenciales incorrectas"+"\"}", HttpStatus.BAD_REQUEST);
+    }
+
 }
