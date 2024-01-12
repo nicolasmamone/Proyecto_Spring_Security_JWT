@@ -23,12 +23,13 @@ public class CustomerDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        log.info("Dentro de loadUserByUsername {}", username);
+        log.info("Dentro de loadUserByUsername {}",username);
         userDetail = userDAO.findByEmail(username); // Obtener el usuario por email "username"
 
-        if (Objects.isNull(userDetail)){
-            return new org.springframework.security.core.userdetails.User(userDetail.getEmail(), userDetail.getPassword(), new ArrayList<>());
-        }else{
+        if(!Objects.isNull(userDetail)){
+            return new org.springframework.security.core.userdetails.User(userDetail.getEmail(),userDetail.getPassword(),new ArrayList<>());
+        }
+        else{
             throw new UsernameNotFoundException("Usuario no encontrado");
         }
     }
@@ -36,4 +37,5 @@ public class CustomerDetailsService implements UserDetailsService {
     public User getUserDetail(){
         return userDetail;
     }
+
 }

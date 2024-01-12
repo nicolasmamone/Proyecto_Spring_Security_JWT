@@ -91,7 +91,7 @@ public class UserServiceImpl implements UserService {
             Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(requestMap.get("email"), requestMap.get("password"))
             );
-            if (authentication. isAuthenticated()){ // si su estado es true entonces esta activo
+            if (authentication.isAuthenticated()){ // si su estado es true entonces esta activo
                 if (customerDetailsService.getUserDetail().getStatus().equalsIgnoreCase("true")){
                     return new ResponseEntity<String>("{\"token\":\" "
                             + jwtUtil.generateToken(customerDetailsService.getUserDetail().getEmail(), customerDetailsService.getUserDetail().getRole()) + "\"}", // generamos el token
