@@ -5,10 +5,9 @@ import lombok.Data;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
-import java.io.Serializable;
-
 //JDBC
 @NamedQuery(name = "User.findByEmail",query = "select u from User u where u.email=:email")
+@NamedQuery(name = "User.getAllUsers",query = "select new com.api.gestion.wrapper.UserWrapper(u.id, u.nombre, u.email, u.numeroDeContacto, u.status) from User u where u.role='user'")
 // --------------
 
 
@@ -24,7 +23,7 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer Id;
+    private Integer id;
 
     @Column(name = "nombre")
     private String nombre;

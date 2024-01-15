@@ -3,11 +3,14 @@ package com.api.gestion.rest;
 import com.api.gestion.constantes.FacturaConstantes;
 import com.api.gestion.service.UserService;
 import com.api.gestion.util.FacturaUtils;
+import com.api.gestion.wrapper.UserWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -35,5 +38,16 @@ public class UserController {
             exception.printStackTrace();
         }
         return FacturaUtils.getResponseEntity(FacturaConstantes.SOMETHING_WENT_WRONG,HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @GetMapping("/get")
+    public ResponseEntity<List<UserWrapper>> listarUsuarios(){
+         try {
+            return userService.getAllUsers();
+         }catch (Exception exception){
+             exception.printStackTrace();
+         }
+         return new ResponseEntity<List<UserWrapper>>(new ArrayList<>(), HttpStatus.INTERNAL_SERVER_ERROR);
+
     }
 }

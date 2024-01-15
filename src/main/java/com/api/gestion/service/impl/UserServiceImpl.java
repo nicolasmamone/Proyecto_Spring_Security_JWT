@@ -4,9 +4,11 @@ import com.api.gestion.constantes.FacturaConstantes;
 import com.api.gestion.dao.UserDAO;
 import com.api.gestion.pojo.User;
 import com.api.gestion.security.CustomerDetailsService;
+import com.api.gestion.security.jwt.JwtFilter;
 import com.api.gestion.security.jwt.JwtUtil;
 import com.api.gestion.service.UserService;
 import com.api.gestion.util.FacturaUtils;
+import com.api.gestion.wrapper.UserWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,6 +18,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -34,6 +38,10 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private JwtUtil jwtUtil;
+
+    @Autowired
+    private JwtFilter jwtFilter;
+
 
 
     // Método para poder guardar un usuario
@@ -93,7 +101,7 @@ public class UserServiceImpl implements UserService {
             );
             if (authentication.isAuthenticated()){ // si su estado es true entonces esta activo
                 if (customerDetailsService.getUserDetail().getStatus().equalsIgnoreCase("true")){
-                    return new ResponseEntity<String>("{\"token\":\" "
+                    return new ResponseEntity<String>("{\"token\":\""
                             + jwtUtil.generateToken(customerDetailsService.getUserDetail().getEmail(), customerDetailsService.getUserDetail().getRole()) + "\"}", // generamos el token
                             HttpStatus.OK);
                 }else{
@@ -105,5 +113,20 @@ public class UserServiceImpl implements UserService {
         }
         return new ResponseEntity<String>("{\"mensaje\":\" "+"Credenciales incorrectas"+"\"}", HttpStatus.BAD_REQUEST);
     }
+
+    @Override
+    public ResponseEntity<List<UserWrapper>> getAllUsers() {
+        try{
+            if(jwtFilter.isAdmin()){
+                return new ResponseEntity<>(userDAO.getAllUsers(), HttpStatus.OK);
+            }else{
+                return new ResponseEntity<>(new ArrayList<>(), HttpStatus.UNAUTHORIZED);
+            }
+        }catch (Exception exception){
+            exception.printStackTrace();
+        }
+        return  new ResponseEntity<>(new ArrayList<>(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
 
 }
