@@ -5,9 +5,12 @@ import lombok.Data;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
+import java.io.Serializable;
+
 //JDBC
-@NamedQuery(name = "User.findByEmail",query = "select u from User u where u.email=:email")
+@NamedQuery(name = "User.findByEmail",query = "select u from User u where u.email=:email") // donde el mail del usuario sea igual al email q le pasemos por parametro
 @NamedQuery(name = "User.getAllUsers",query = "select new com.api.gestion.wrapper.UserWrapper(u.id, u.nombre, u.email, u.numeroDeContacto, u.status) from User u where u.role='user'")
+@NamedQuery(name = "User.updateStatus",query = "update User u set u.status=:status where u.id=:id") // update el status del user con el status que le pasemos por parametro donde el id del user sea igual al id que le pasemos por parametro
 // --------------
 
 
@@ -18,7 +21,9 @@ import org.hibernate.annotations.DynamicUpdate;
 @DynamicUpdate
 @DynamicInsert
 @Table(name = "users")
-public class User {
+public class User implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
 
     @Id

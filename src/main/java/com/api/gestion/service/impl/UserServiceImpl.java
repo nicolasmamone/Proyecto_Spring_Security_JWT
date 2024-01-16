@@ -18,10 +18,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -126,6 +123,26 @@ public class UserServiceImpl implements UserService {
             exception.printStackTrace();
         }
         return  new ResponseEntity<>(new ArrayList<>(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @Override
+    public ResponseEntity<String> update(Map<String, String> requestMap) {
+        try {
+            if (jwtFilter.isAdmin()){
+                Optional<User> optionalUser = userDAO.findById(Integer.parseInt(requestMap.get("id")));
+                if (!optionalUser.isEmpty()){
+                    userDAO.updateStatus(requestMap.get("status"), Integer.parseInt(requestMap.get("id")));
+                    return FacturaUtils.getResponseEntity("Status del usuario actualizado", HttpStatus.OK);
+                }else {
+                    return FacturaUtils.getResponseEntity("Este Usuario no existe", HttpStatus.NOT_FOUND);
+                }
+            }else {
+                return FacturaUtils.getResponseEntity(FacturaConstantes.UNAUTHORIZED_ACCESS, HttpStatus.UNAUTHORIZED);
+            }
+        }catch (Exception exception){
+            exception.printStackTrace();
+        }
+        return FacturaUtils.getResponseEntity(FacturaConstantes.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 
