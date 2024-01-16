@@ -7,7 +7,8 @@ import com.api.gestion.security.CustomerDetailsService;
 import com.api.gestion.security.jwt.JwtFilter;
 import com.api.gestion.security.jwt.JwtUtil;
 import com.api.gestion.service.UserService;
-import com.api.gestion.util.FacturaUtils;
+import com.api.gestion.utils.EmailsUtils;
+import com.api.gestion.utils.FacturaUtils;
 import com.api.gestion.wrapper.UserWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +40,8 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private JwtFilter jwtFilter;
 
-
+    @Autowired
+    private EmailsUtils emailsUtils;
 
     // Método para poder guardar un usuario
     @Override
@@ -132,6 +134,9 @@ public class UserServiceImpl implements UserService {
                 Optional<User> optionalUser = userDAO.findById(Integer.parseInt(requestMap.get("id")));
                 if (!optionalUser.isEmpty()){
                     userDAO.updateStatus(requestMap.get("status"), Integer.parseInt(requestMap.get("id")));
+                    //enviamos el correo
+                    enviarCorreoToAdmins(requestMap.get("status"), optionalUser.get().getEmail(), userDAO.getAllAdmins());
+
                     return FacturaUtils.getResponseEntity("Status del usuario actualizado", HttpStatus.OK);
                 }else {
                     return FacturaUtils.getResponseEntity("Este Usuario no existe", HttpStatus.NOT_FOUND);
@@ -145,5 +150,26 @@ public class UserServiceImpl implements UserService {
         return FacturaUtils.getResponseEntity(FacturaConstantes.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    public void enviarCorreoToAdmins(String status, String user, List<String> allAdmins){
+        allAdmins.remove(jwtFilter.getCurrentUser());
+        if (status != null && status.equalsIgnoreCase("true")){
+
+            emailsUtils.sendSimpleMessage(
+                    //el admin q va a enviar los correos
+                    jwtFilter.getCurrentUser() ,
+                    "Cuenta Aprobada",
+                    "USUARIO: " + user + "\n es aprobado por \n ADMIN: " + jwtFilter.getCurrentUser(),
+                    allAdmins
+            );
+        }else{
+            emailsUtils.sendSimpleMessage(
+                    //el admin q va a enviar los correos
+                    jwtFilter.getCurrentUser() ,
+                    "Cuenta Desaprobada",
+                    "USUARIO: " + user + "\n es desaprobado por \n ADMIN: " + jwtFilter.getCurrentUser(),
+                    allAdmins
+            );
+        }
+    }
 
 }

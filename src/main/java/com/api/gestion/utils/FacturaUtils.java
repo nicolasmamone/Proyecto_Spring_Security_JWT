@@ -1,4 +1,4 @@
-package com.api.gestion.util;
+package com.api.gestion.utils;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

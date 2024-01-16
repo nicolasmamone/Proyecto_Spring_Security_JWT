@@ -2,7 +2,7 @@ package com.api.gestion.rest;
 
 import com.api.gestion.constantes.FacturaConstantes;
 import com.api.gestion.service.UserService;
-import com.api.gestion.util.FacturaUtils;
+import com.api.gestion.utils.FacturaUtils;
 import com.api.gestion.wrapper.UserWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
