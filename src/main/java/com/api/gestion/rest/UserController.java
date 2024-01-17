@@ -60,4 +60,28 @@ public class UserController {
         }
         return FacturaUtils.getResponseEntity(FacturaConstantes.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    @GetMapping("/checkToken")
+    public ResponseEntity<String> validarToken(){
+        try {
+            return userService.checkToken();
+        }catch(Exception exception){
+            exception.printStackTrace();
+        }
+        return FacturaUtils.getResponseEntity(FacturaConstantes.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @PostMapping("/changepassword")
+    public ResponseEntity<String> cambiarContrasenia(@RequestBody(required = true) Map<String, String> requestMap){
+        try {
+            return userService.changePassword(requestMap);
+        }catch(Exception exception){
+            exception.printStackTrace();
+        }
+        return FacturaUtils.getResponseEntity(FacturaConstantes.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+
+    }
+
+
+
 }

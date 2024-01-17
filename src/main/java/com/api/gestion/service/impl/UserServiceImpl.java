@@ -150,6 +150,7 @@ public class UserServiceImpl implements UserService {
         return FacturaUtils.getResponseEntity(FacturaConstantes.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+
     public void enviarCorreoToAdmins(String status, String user, List<String> allAdmins){
         allAdmins.remove(jwtFilter.getCurrentUser());
         if (status != null && status.equalsIgnoreCase("true")){
@@ -172,4 +173,29 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+
+    @Override
+    public ResponseEntity<String> checkToken() {
+        return FacturaUtils.getResponseEntity("true", HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<String> changePassword(Map<String, String> requestMap) {
+        try {
+            User user = userDAO.findByEmail(jwtFilter.getCurrentUser());//el usuario que inicio sesion
+            if (!user.equals(null)){
+                if (user.getPassword().equals(requestMap.get("oldPassword"))){
+                    user.setPassword(requestMap.get("newPassword"));
+                    userDAO.save(user);
+                    return FacturaUtils.getResponseEntity("Contrasenia actualizada con exito", HttpStatus.OK);
+                }
+                return FacturaUtils.getResponseEntity("Contrasenia incorrecta", HttpStatus.BAD_REQUEST);
+            }
+            return FacturaUtils.getResponseEntity(FacturaConstantes.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+        }catch (Exception exception){
+            exception.printStackTrace();
+        }
+        return FacturaUtils.getResponseEntity(FacturaConstantes.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+
+    }
 }
