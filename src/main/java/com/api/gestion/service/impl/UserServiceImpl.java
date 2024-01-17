@@ -10,6 +10,7 @@ import com.api.gestion.service.UserService;
 import com.api.gestion.utils.EmailsUtils;
 import com.api.gestion.utils.FacturaUtils;
 import com.api.gestion.wrapper.UserWrapper;
+import com.google.common.base.Strings;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -197,5 +198,20 @@ public class UserServiceImpl implements UserService {
         }
         return FacturaUtils.getResponseEntity(FacturaConstantes.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
 
+    }
+
+    @Override
+    public ResponseEntity<String> forgotPassword(Map<String, String> requestMap) {
+        try {
+            User user = userDAO.findByEmail(requestMap.get("email"));
+            if(!Objects.isNull(user) && !Strings.isNullOrEmpty(user.getEmail())){
+                emailsUtils.forgotPassword(user.getEmail(), "Credenciales del sistema Gestion de facturas", user.getPassword());
+            }
+
+            return FacturaUtils.getResponseEntity("Verifica Tus Credenciales enviadas a tu mail", HttpStatus.OK);
+        }catch (Exception exception){
+            exception.printStackTrace();
+        }
+        return FacturaUtils.getResponseEntity(FacturaConstantes.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

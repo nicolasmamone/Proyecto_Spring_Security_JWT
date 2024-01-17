@@ -82,6 +82,14 @@ public class UserController {
 
     }
 
-
+    @PostMapping("/forgotpassword")
+    public ResponseEntity<String> recuperarContrasenia(@RequestBody Map<String, String> requestMap){
+        try {
+            return userService.forgotPassword(requestMap);
+        }catch (Exception exception){
+            exception.printStackTrace();
+        }
+        return FacturaUtils.getResponseEntity(FacturaConstantes.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 
 }
