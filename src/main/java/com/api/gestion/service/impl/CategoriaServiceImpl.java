@@ -6,12 +6,15 @@ import com.api.gestion.pojo.Categoria;
 import com.api.gestion.security.jwt.JwtFilter;
 import com.api.gestion.service.CategoriaService;
 import com.api.gestion.utils.FacturaUtils;
+import com.google.common.base.Strings;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -41,6 +44,21 @@ public class CategoriaServiceImpl implements CategoriaService {
             exception.printStackTrace();
         }
         return FacturaUtils.getResponseEntity(FacturaConstantes.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @Override
+    public ResponseEntity<List<Categoria>> getAllCategorias(String valueFilter) {
+        try {
+            if (!Strings.isNullOrEmpty(valueFilter) && valueFilter.equalsIgnoreCase("true")){
+                log.info("Usando el metodo getAllCategorias de Categoria ****************");
+                return new ResponseEntity<List<Categoria>>(categoriaDAO.getAllCategorias(),HttpStatus.OK);
+            }
+                log.info("Usando el metodo findAll() de JpaRepository ****************");
+                return new ResponseEntity<List<Categoria>>(categoriaDAO.findAll(),HttpStatus.OK);
+        }catch(Exception exception){
+            exception.printStackTrace();
+        }
+        return new ResponseEntity<List<Categoria>>(new ArrayList<>(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     private boolean validateCategoriaMap(Map<String, String> requestMap, boolean validateId){
