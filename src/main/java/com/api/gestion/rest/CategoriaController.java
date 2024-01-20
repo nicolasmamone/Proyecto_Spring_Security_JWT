@@ -39,4 +39,14 @@ public class CategoriaController {
         }
         return new ResponseEntity<>(new ArrayList<>(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    @PostMapping("/update") //probamos POST en vez de PUT
+    public ResponseEntity<String> actualizarCategoria(@RequestBody(required = true) Map<String, String> requestMap){
+        try {
+            return categoriaService.updateCategoria(requestMap);
+        }catch (Exception exception){
+            exception.printStackTrace();
+        }
+        return FacturaUtils.getResponseEntity(FacturaConstantes.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }

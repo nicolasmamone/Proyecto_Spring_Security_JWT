@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -86,5 +87,25 @@ public class CategoriaServiceImpl implements CategoriaService {
         }
         categoria.setNombre(requestMap.get("nombre"));
         return categoria;
+    }
+
+    @Override
+    public ResponseEntity<String> updateCategoria(Map<String, String> requestMap) {
+        try {
+            if (jwtFilter.isAdmin()){
+                if (validateCategoriaMap(requestMap,true)){
+                    Optional optional = categoriaDAO.findById(Integer.parseInt(requestMap.get("id")));
+                    if (!optional.isEmpty()){
+                        categoriaDAO.save(getCategoriaFromMap(requestMap, true));
+                        return FacturaUtils.getResponseEntity("Categoria Actualizada con exito", HttpStatus.OK);
+                    }else{
+                        return FacturaUtils.getResponseEntity("La categoria con ese ID no existe",HttpStatus.NOT_FOUND);
+                    }
+                }
+            }
+        }catch (Exception exception){
+            exception.printStackTrace();
+        }
+        return FacturaUtils.getResponseEntity(FacturaConstantes.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
