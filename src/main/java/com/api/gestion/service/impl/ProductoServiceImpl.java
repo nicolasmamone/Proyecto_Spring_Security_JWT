@@ -7,11 +7,14 @@ import com.api.gestion.pojo.Producto;
 import com.api.gestion.security.jwt.JwtFilter;
 import com.api.gestion.service.ProductoService;
 import com.api.gestion.utils.FacturaUtils;
+import com.api.gestion.wrapper.ProductoWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -39,6 +42,16 @@ public class ProductoServiceImpl implements ProductoService {
             exception.printStackTrace();
         }
         return FacturaUtils.getResponseEntity(FacturaConstantes.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @Override
+    public ResponseEntity<List<ProductoWrapper>> getAllProductos() {
+        try{
+            return new ResponseEntity<>(productoDAO.getAllProductos(), HttpStatus.OK);
+        }catch(Exception exception){
+            exception.printStackTrace();
+        }
+        return new ResponseEntity<>(new ArrayList<>(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     private Producto getProductoFromMap(Map<String, String> requestMap, boolean isAdd){

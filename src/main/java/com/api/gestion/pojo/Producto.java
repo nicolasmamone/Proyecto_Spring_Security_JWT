@@ -5,6 +5,7 @@ import lombok.Data;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
+@NamedQuery(name = "Producto.getAllProductos", query = "SELECT new com.api.gestion.wrapper.ProductoWrapper(p.id, p.nombre, p.descripcion, p.precio, p.status, p.categoria.id, p.categoria.nombre) FROM Producto p")
 @Data
 @Entity
 @DynamicInsert
