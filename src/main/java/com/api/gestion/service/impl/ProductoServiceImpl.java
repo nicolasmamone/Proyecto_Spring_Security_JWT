@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class ProductoServiceImpl implements ProductoService {
@@ -52,6 +53,32 @@ public class ProductoServiceImpl implements ProductoService {
             exception.printStackTrace();
         }
         return new ResponseEntity<>(new ArrayList<>(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @Override
+    public ResponseEntity<String> updateProducto(Map<String, String> requestMap) {
+        try {
+            if (jwtFilter.isAdmin()){ // Si es admin
+                if (validateProductoMap(requestMap, true)){ // Si estamos actualizando
+                    Optional<Producto> productoOptional = productoDAO.findById(Integer.parseInt(requestMap.get("id")));
+                    if (!productoOptional.isEmpty()){ // Si se encuentra el producto
+                        Producto producto = getProductoFromMap(requestMap, true);
+                        producto.setStatus(productoOptional.get().getStatus());
+                        productoDAO.save(producto);
+                        return FacturaUtils.getResponseEntity("Producto actualizado con Exito", HttpStatus.OK);
+                    }else{
+                        return FacturaUtils.getResponseEntity("Ese producto no existe", HttpStatus.NOT_FOUND);
+                    }
+                }else{
+                    return FacturaUtils.getResponseEntity(FacturaConstantes.INVALID_DATA, HttpStatus.INTERNAL_SERVER_ERROR);
+                }
+            }else{
+                return FacturaUtils.getResponseEntity(FacturaConstantes.UNAUTHORIZED_ACCESS, HttpStatus.UNAUTHORIZED);
+            }
+        }catch(Exception exception){
+            exception.printStackTrace();
+        }
+        return FacturaUtils.getResponseEntity(FacturaConstantes.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     private Producto getProductoFromMap(Map<String, String> requestMap, boolean isAdd){
