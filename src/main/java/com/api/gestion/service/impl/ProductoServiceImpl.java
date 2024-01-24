@@ -81,6 +81,26 @@ public class ProductoServiceImpl implements ProductoService {
         return FacturaUtils.getResponseEntity(FacturaConstantes.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    @Override
+    public ResponseEntity<String> deleteProducto(Integer id) {
+        try {
+            if (jwtFilter.isAdmin()){ // Si es admin
+                Optional<Producto> productoOptional = productoDAO.findById(id);
+                if (!productoOptional.isEmpty()){
+                    productoDAO.deleteById(id);
+                    return FacturaUtils.getResponseEntity("Producto eliminado con Exito", HttpStatus.OK);
+                }else{
+                    return FacturaUtils.getResponseEntity(FacturaConstantes.INVALID_DATA, HttpStatus.INTERNAL_SERVER_ERROR);
+                }
+            }else{
+                return FacturaUtils.getResponseEntity(FacturaConstantes.UNAUTHORIZED_ACCESS, HttpStatus.UNAUTHORIZED);
+            }
+        }catch(Exception exception){
+            exception.printStackTrace();
+        }
+        return FacturaUtils.getResponseEntity(FacturaConstantes.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
     private Producto getProductoFromMap(Map<String, String> requestMap, boolean isAdd){
         Categoria categoria = new Categoria();
         categoria.setId(Integer.parseInt(requestMap.get("categoriaId")));

@@ -15,4 +15,6 @@ public interface ProductoService {
     ResponseEntity<List<ProductoWrapper>> getAllProductos();
 
     ResponseEntity<String> updateProducto(Map<String, String> requestMap);
+
+    ResponseEntity<String> deleteProducto(Integer id);
 }

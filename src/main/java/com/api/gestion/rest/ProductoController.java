@@ -49,4 +49,14 @@ public class ProductoController {
         }
         return FacturaUtils.getResponseEntity(FacturaConstantes.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> eliminarProducto(@PathVariable Integer id){
+        try {
+            return productoService.deleteProducto(id);
+        }catch (Exception exception){
+            exception.printStackTrace();
+        }
+        return FacturaUtils.getResponseEntity(FacturaConstantes.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }
