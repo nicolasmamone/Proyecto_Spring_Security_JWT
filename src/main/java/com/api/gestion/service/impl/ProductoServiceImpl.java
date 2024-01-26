@@ -90,7 +90,27 @@ public class ProductoServiceImpl implements ProductoService {
                     productoDAO.deleteById(id);
                     return FacturaUtils.getResponseEntity("Producto eliminado con Exito", HttpStatus.OK);
                 }else{
-                    return FacturaUtils.getResponseEntity(FacturaConstantes.INVALID_DATA, HttpStatus.INTERNAL_SERVER_ERROR);
+                    return FacturaUtils.getResponseEntity(FacturaConstantes.INVALID_DATA, HttpStatus.BAD_REQUEST);
+                }
+            }else{
+                return FacturaUtils.getResponseEntity(FacturaConstantes.UNAUTHORIZED_ACCESS, HttpStatus.UNAUTHORIZED);
+            }
+        }catch(Exception exception){
+            exception.printStackTrace();
+        }
+        return FacturaUtils.getResponseEntity(FacturaConstantes.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @Override
+    public ResponseEntity<String> updateStatus(Map<String, String> requestMap) {
+        try {
+            if (jwtFilter.isAdmin()){ // Si es admin
+                Optional<Producto> productoOptional = productoDAO.findById(Integer.parseInt(requestMap.get("id")));
+                if (!productoOptional.isEmpty()){
+                    productoDAO.updateStatus(requestMap.get("status"), Integer.parseInt(requestMap.get("id")));
+                    return FacturaUtils.getResponseEntity("STATUS del Producto actualizado con Exito", HttpStatus.OK);
+                }else{
+                    return FacturaUtils.getResponseEntity("El Producto no existe", HttpStatus.NOT_FOUND);
                 }
             }else{
                 return FacturaUtils.getResponseEntity(FacturaConstantes.UNAUTHORIZED_ACCESS, HttpStatus.UNAUTHORIZED);

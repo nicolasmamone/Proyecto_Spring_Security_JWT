@@ -59,4 +59,14 @@ public class ProductoController {
         }
         return FacturaUtils.getResponseEntity(FacturaConstantes.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    @PostMapping("/updatestatus")
+    public ResponseEntity<String> actualizarStatus(@RequestBody Map<String,String> requestMap){
+        try {
+            return productoService.updateStatus(requestMap);
+        }catch (Exception exception){
+            exception.printStackTrace();
+        }
+        return FacturaUtils.getResponseEntity(FacturaConstantes.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }
