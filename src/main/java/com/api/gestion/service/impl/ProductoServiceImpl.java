@@ -121,6 +121,27 @@ public class ProductoServiceImpl implements ProductoService {
         return FacturaUtils.getResponseEntity(FacturaConstantes.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    @Override
+    public ResponseEntity<List<ProductoWrapper>> getByCategoria(Integer id) {
+        try {
+            return new ResponseEntity<>(productoDAO.getProductoByCategoria(id),HttpStatus.OK);
+        }catch (Exception exception){
+            exception.printStackTrace();
+        }
+        return new ResponseEntity<>(new ArrayList<>(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @Override
+    public ResponseEntity<ProductoWrapper> getProductoById(Integer id) {
+        try {
+            return new ResponseEntity<>(productoDAO.getProductoById(id), HttpStatus.OK);
+        }catch (Exception exception){
+            exception.printStackTrace();
+        }
+        return new ResponseEntity<>(new ProductoWrapper(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+
     private Producto getProductoFromMap(Map<String, String> requestMap, boolean isAdd){
         Categoria categoria = new Categoria();
         categoria.setId(Integer.parseInt(requestMap.get("categoriaId")));

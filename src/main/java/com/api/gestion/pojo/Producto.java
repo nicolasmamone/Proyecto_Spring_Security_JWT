@@ -7,6 +7,8 @@ import org.hibernate.annotations.DynamicUpdate;
 
 @NamedQuery(name = "Producto.getAllProductos", query = "SELECT new com.api.gestion.wrapper.ProductoWrapper(p.id, p.nombre, p.descripcion, p.precio, p.status, p.categoria.id, p.categoria.nombre) FROM Producto p")
 @NamedQuery(name = "Producto.updateStatus", query = "UPDATE  Producto p SET p.status=: status WHERE p.id=: id")
+@NamedQuery(name = "Producto.getProductoByCategoria", query = "SELECT new com.api.gestion.wrapper.ProductoWrapper(p.id, p.nombre) FROM Producto p WHERE p.categoria.id=: id and p.status= 'true' ")
+@NamedQuery(name = "Producto.getProductoById", query = "SELECT new com.api.gestion.wrapper.ProductoWrapper(p.id, p.nombre, p.descripcion, p.precio) FROM Producto p WHERE p.id=: id ")
 
 @Data
 @Entity
