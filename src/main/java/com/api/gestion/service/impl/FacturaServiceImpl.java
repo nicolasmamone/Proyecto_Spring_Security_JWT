@@ -68,11 +68,11 @@ public class FacturaServiceImpl implements FacturaService {
 
                 JSONArray jsonArray = FacturaUtils.getJsonArrayFromString((String) requestMap.get("productoDetalles"));
                 for (int i = 0; i < jsonArray.length(); i++) {
-                    addRows(pdfPTable, FacturaUtils.getMapFromJson(jsonArray.toString(i)));//generamos cada fila de cada posicion en el jsonArray
+                    addRows(pdfPTable, FacturaUtils.getMapFromJson(jsonArray.getString(i)));//generamos cada fila de cada posicion en el jsonArray
                 }
                 document.add(pdfPTable);
 
-                Paragraph footer = new Paragraph("TOTAL: " + requestMap.get("total")
+                Paragraph footer = new Paragraph("TOTAL: " + requestMap.get("montoTotal")
                         + "\n" + "Gracias por visitarnos, vuelva pronto !!", getFont("data"));
                 document.add(footer);
 
@@ -151,7 +151,7 @@ public class FacturaServiceImpl implements FacturaService {
             factura.setEmail((String) requestMap.get("email"));
             factura.setNumeroContacto((String) requestMap.get("numeroContacto"));
             factura.setMetodoPago((String) requestMap.get("metodoPago"));
-            factura.setTotal(Integer.parseInt((String) requestMap.get("total")));
+            factura.setTotal(Integer.parseInt((String) requestMap.get("montoTotal")));
             factura.setProductoDetalles((String) requestMap.get("productoDetalles"));
             factura.setCreatedBy(jwtFilter.getCurrentUser());
             facturaDAO.save(factura);
@@ -169,6 +169,6 @@ public class FacturaServiceImpl implements FacturaService {
                 requestMap.containsKey("email") &&
                 requestMap.containsKey("metodoPago") &&
                 requestMap.containsKey("productoDetalles") &&
-                requestMap.containsKey("total");
+                requestMap.containsKey("montoTotal");
     }
 }

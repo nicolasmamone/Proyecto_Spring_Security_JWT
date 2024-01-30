@@ -33,8 +33,8 @@ public class Factura {
 
     @Column(name = "total")
     private Integer total;
-
-    @Column(name = "productoDetalles")
+    //columnDefinition --> nos sirve para indicar como se creara la columna sin depender de la anotacion de jpa
+    @Column(name = "productoDetalles", columnDefinition = "json")
     private String productoDetalles;
 
     @Column(name = "createdBy")
