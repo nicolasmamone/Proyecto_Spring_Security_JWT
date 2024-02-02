@@ -40,4 +40,14 @@ public class FacturaController {
         }
         return new ResponseEntity<>(new ArrayList<>(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    @PostMapping("/getPdf")
+    public ResponseEntity<byte[]> obtenerPdf(@RequestBody Map<String, Object> requestMap){
+        try {
+            return facturaService.getPdf(requestMap);
+        }catch (Exception exception){
+            exception.printStackTrace();
+        }
+        return null;
+    }
 }

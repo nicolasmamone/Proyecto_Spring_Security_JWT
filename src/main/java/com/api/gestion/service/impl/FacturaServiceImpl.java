@@ -12,14 +12,16 @@ import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.pdfbox.io.IOUtils;
 import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.io.FileOutputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -99,6 +101,37 @@ public class FacturaServiceImpl implements FacturaService {
             facturas = facturaDAO.getFacturaByUsername(jwtFilter.getCurrentUser());
         }
         return new ResponseEntity<>(facturas, HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<byte[]> getPdf(Map<String, Object> requestMap) {
+        log.info("Dentro de getPdf: requestMap{} ",requestMap);
+        try {
+            byte[] bytesArray = new byte[0];
+            if (!requestMap.containsKey("uuid") && validateRequestMap(requestMap)){
+                return new ResponseEntity<>(bytesArray, HttpStatus.BAD_REQUEST);
+            }
+            String filepath = FacturaConstantes.STORE_LOCATION + "\\" + (String) requestMap.get("uuid") + ".pdf";
+            if (FacturaUtils.isFileExist(filepath)){ //Si el pdf existe --> mando el byteArray en la respuesta
+                bytesArray = getByteArray(filepath);
+                return new ResponseEntity<>(bytesArray, HttpStatus.OK);
+            }else{ // Sino --> Creamos reporte y luego lo obtenemos
+                requestMap.put("isGenerate", false);
+                generatedReport(requestMap);
+                bytesArray = getByteArray(filepath);
+            }
+        }catch (Exception exception){
+            exception.printStackTrace();
+        }
+        return null;
+    }
+
+    private byte[] getByteArray(String filePath) throws IOException {
+        File initialFile = new File(filePath);
+        InputStream inputStream = new FileInputStream(initialFile);
+        byte[] byteArray = IOUtils.toByteArray(inputStream);
+        inputStream.close();
+        return byteArray;
     }
 
     private void setRectangleInPdf(Document document) throws DocumentException {

@@ -11,4 +11,6 @@ public interface FacturaService {
     ResponseEntity<String> generatedReport(Map<String, Object> requestMap);
 
     ResponseEntity<List<Factura>> getFacturas();
+
+    ResponseEntity<byte[]> getPdf(Map<String, Object> requestMap);
 }
