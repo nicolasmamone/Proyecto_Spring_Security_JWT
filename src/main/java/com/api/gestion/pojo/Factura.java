@@ -5,6 +5,9 @@ import lombok.Data;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
+@NamedQuery(name = "Factura.getFacturas", query = "SELECT f FROM Factura f ORDER BY  f.id DESC")
+@NamedQuery(name = "Factura.getFacturaByUsername", query = "SELECT f FROM Factura f WHERE f.createdBy=: username ORDER BY f.id DESC ")
+
 @Data
 @Entity
 @DynamicUpdate

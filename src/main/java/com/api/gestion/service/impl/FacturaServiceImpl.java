@@ -20,6 +20,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -86,6 +88,17 @@ public class FacturaServiceImpl implements FacturaService {
             exception.printStackTrace();
         }
         return FacturaUtils.getResponseEntity(FacturaConstantes.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @Override
+    public ResponseEntity<List<Factura>> getFacturas() {
+        List<Factura> facturas = new ArrayList<>();
+        if (jwtFilter.isAdmin()){
+            facturas = facturaDAO.getFacturas();
+        }else{
+            facturas = facturaDAO.getFacturaByUsername(jwtFilter.getCurrentUser());
+        }
+        return new ResponseEntity<>(facturas, HttpStatus.OK);
     }
 
     private void setRectangleInPdf(Document document) throws DocumentException {
