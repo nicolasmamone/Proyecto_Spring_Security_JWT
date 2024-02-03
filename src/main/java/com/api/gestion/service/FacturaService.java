@@ -13,4 +13,6 @@ public interface FacturaService {
     ResponseEntity<List<Factura>> getFacturas();
 
     ResponseEntity<byte[]> getPdf(Map<String, Object> requestMap);
+
+    ResponseEntity<String> deleteFactura(Integer id);
 }

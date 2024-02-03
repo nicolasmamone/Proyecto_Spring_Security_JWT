@@ -50,4 +50,13 @@ public class FacturaController {
         }
         return null;
     }
+    @DeleteMapping("/deleteFactura/{id}")
+    public ResponseEntity<String> eliminarFactura(@PathVariable Integer id){
+        try {
+            return facturaService.deleteFactura(id);
+        }catch (Exception exception){
+            exception.printStackTrace();
+        }
+        return FacturaUtils.getResponseEntity(FacturaConstantes.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }

@@ -6,7 +6,6 @@ import com.api.gestion.pojo.Factura;
 import com.api.gestion.security.jwt.JwtFilter;
 import com.api.gestion.service.FacturaService;
 import com.api.gestion.utils.FacturaUtils;
-import com.google.common.io.FileBackedOutputStream;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
@@ -15,9 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.pdfbox.io.IOUtils;
 import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +22,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 @Slf4j
@@ -124,6 +122,22 @@ public class FacturaServiceImpl implements FacturaService {
             exception.printStackTrace();
         }
         return null;
+    }
+
+    @Override
+    public ResponseEntity<String> deleteFactura(Integer id) {
+        try {
+            Optional<Factura> optional = facturaDAO.findById(id);
+            if (!optional.isEmpty()){
+                facturaDAO.deleteById(id);
+                return FacturaUtils.getResponseEntity("Factura Eliminada correctamente", HttpStatus.OK);
+            }else{
+                return FacturaUtils.getResponseEntity("No existe la factura con ese ID", HttpStatus.NOT_FOUND);
+            }
+        }catch(Exception exception){
+            exception.printStackTrace();
+        }
+        return FacturaUtils.getResponseEntity(FacturaConstantes.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     private byte[] getByteArray(String filePath) throws IOException {
